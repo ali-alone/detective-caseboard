@@ -56,6 +56,18 @@ def update_node_pos(node_id, x ,y):
     conn.close()
     
     
+def update_node_name(node_id, name):
+    conn = sqlite3.connect(DATABASE_NAME)
+    cursor = conn.cursor()
+
+    cursor.execute(
+        "UPDATE nodes SET name = ? WHERE id = ?",
+        (name, node_id)
+    )
+    conn.commit()
+    conn.close()
+
+
 def load_nodes():
     conn = sqlite3.connect(DATABASE_NAME)
     cursor = conn.cursor()

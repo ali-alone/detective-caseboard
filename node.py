@@ -53,6 +53,9 @@ class CircleNode(FloatLayout):
             if board is not None and getattr(board, "delete_mode", False):
                 board.node_tapped_for_delete(self)
                 return True
+            if board is not None and getattr(board, "edit_mode", False):
+                board.node_tapped_for_edit(self)
+                return True
             if board is not None and getattr(board, "connection_mode", False):
                 board.node_tapped(self)
                 return True

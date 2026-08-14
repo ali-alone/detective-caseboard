@@ -14,6 +14,7 @@ from database import (
     update_connection_label,
     delete_node,
     delete_connection,
+    update_node_name,
 )
 
 
@@ -22,6 +23,7 @@ class Board(FloatLayout):
 
     connection_mode = BooleanProperty(False)
     delete_mode = BooleanProperty(False)
+    edit_mode = BooleanProperty(False)
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -30,6 +32,8 @@ class Board(FloatLayout):
         self._pending_first_node = None
         self._label_dialog = None
         self._active_entry = None
+        self._edit_dialog = None
+        self._active_node = None
 
     def add_node(self, name):
         # موقعیت را با pixel محاسبه می‌کنیم، نه pos_hint،
@@ -78,6 +82,43 @@ class Board(FloatLayout):
 
     def cancel_delete_mode(self):
         self.delete_mode = False
+
+    # ---------- Edit mode ----------
+    def start_edit_mode(self):
+        self.edit_mode = True
+        self.connection_mode = False
+        self.delete_mode = False
+        self._pending_first_node = None
+
+    def cancel_edit_mode(self):
+        self.edit_mode = False
+
+    def node_tapped_for_edit(self, node):
+        self.edit_mode = False
+        self._active_node = node
+        self._name_field = MDTextField(hint_text="Person name", text=node.person_name)
+        self._name_field.bind(on_text_validate=self._confirm_edit_name)
+        self._edit_dialog = MDDialog(
+            title="Edit Person",
+            type="custom",
+            content_cls=self._name_field,
+            buttons=[
+                MDFlatButton(text="CANCEL",
+                             on_release=lambda *_: self._edit_dialog.dismiss()),
+                MDRaisedButton(text="SAVE", on_release=self._confirm_edit_name),
+            ],
+        )
+        self._edit_dialog.open()
+
+    def _confirm_edit_name(self, *_):
+        name = self._name_field.text.strip()
+        node = self._active_node
+        if name and node:
+            node.person_name = name
+            if node.db_id:
+                update_node_name(node.db_id, name)
+        self._edit_dialog.dismiss()
+        self._active_node = None
 
     def node_tapped_for_delete(self, node):
         self.delete_mode = False

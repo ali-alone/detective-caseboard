@@ -77,6 +77,14 @@ class CaseBoardApp(MDApp):
         else:
             board.start_delete_mode()
 
+    # ---------- Edit ----------
+    def toggle_edit_mode(self):
+        board = self.root.ids.board
+        if board.edit_mode:
+            board.cancel_edit_mode()
+        else:
+            board.start_edit_mode()
+
 
 if __name__ == "__main__":
     CaseBoardApp().run()
