@@ -1,0 +1,58 @@
+
+MDBoxLayout:
+    orientation: "vertical"
+    md_bg_color: .12, .12, .14, 1
+
+    # ---------- Header ----------
+    MDBoxLayout:
+        size_hint_y: None
+        height: dp(44)
+        md_bg_color: .18, .18, .22, 1
+        padding: dp(6), 0
+        spacing: dp(4)
+        MDIconButton:
+            icon: "menu"
+            on_release: app.toggle_sidebar()
+        MDFlatButton:
+            text: "Add"
+            on_release: app.open_add_dialog()
+        MDFlatButton:
+            text: "Add Connection" if not board.connection_mode else "Tap two people..."
+            on_release: app.start_add_connection()
+        MDFlatButton:
+            text: "Delete"
+            text_color: (1, 0.3, 0.3, 1) if board.delete_mode else (1, 1, 1, 1)
+            on_release: app.toggle_delete_mode()
+        MDFlatButton:
+            text: "Edit"
+        MDFlatButton:
+            text: "Save"
+        Widget:
+
+    MDBoxLayout:
+        orientation: "horizontal"
+
+        # ---------- Sidebar ----------
+        MDBoxLayout:
+            id: sidebar
+            orientation: "vertical"
+            size_hint_x: None
+            width: 0
+            opacity: 0
+            md_bg_color: .16, .16, .19, 1
+            padding: dp(8)
+            spacing: dp(6)
+            MDLabel:
+                text: "Cases"
+                bold: True
+                size_hint_y: None
+                height: dp(30)
+                halign: "center"
+            MDFlatButton:
+                text: "+ New Case"
+                size_hint_x: 1
+            Widget:
+
+        # ---------- Board ----------
+        Board:
+            id: board
