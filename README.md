@@ -62,6 +62,22 @@ buildozer init
 buildozer -v android debug
 ```
 
+> Buildozer only runs on Linux (or WSL on Windows). After a successful build, the APK is generated in the `bin/` folder.
+
+## Ready-made Installers
+
+- **Windows** — a ready-to-run build is available at [`installers/DetectiveCaseboard-Windows.zip`](installers/DetectiveCaseboard-Windows.zip). Unzip it and run `DetectiveCaseboard.exe`, no Python install required.
+- **Android** — no prebuilt APK is included yet since building one requires Buildozer on Linux/WSL. Use the `buildozer.spec` in this repo to build it yourself (see above).
+
+### Rebuilding the Windows executable
+
+```bash
+pip install pyinstaller
+pyinstaller --noconfirm --windowed --name "DetectiveCaseboard" --add-data "caseboard.kv;." --exclude-module PIL main.py
+```
+
+The output will be in `dist/DetectiveCaseboard/`.
+
 ## Roadmap
 
 - [ ] Profile pictures for person nodes
