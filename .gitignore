@@ -8,3 +8,4 @@ DetectiveCaseboard.spec
 pyinstaller_log*.txt
 .buildozer/
 bin/
+installers/

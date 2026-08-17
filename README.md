@@ -66,7 +66,7 @@ buildozer -v android debug
 
 ## Ready-made Installers
 
-- **Windows** — a ready-to-run build is available at [`installers/DetectiveCaseboard-Windows.zip`](installers/DetectiveCaseboard-Windows.zip). Unzip it and run `DetectiveCaseboard.exe`, no Python install required.
+- **Windows** — download the ready-to-run build from the [Releases page](https://github.com/ali-alone/detective-caseboard/releases/latest). Unzip it and run `DetectiveCaseboard.exe`, no Python install required.
 - **Android** — no prebuilt APK is included yet since building one requires Buildozer on Linux/WSL. Use the `buildozer.spec` in this repo to build it yourself (see above).
 
 ### Rebuilding the Windows executable
