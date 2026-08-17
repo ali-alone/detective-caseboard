@@ -2,6 +2,7 @@ from kivy.properties import StringProperty, NumericProperty
 from kivy.uix.floatlayout import FloatLayout
 from kivy.graphics import Color, Ellipse
 from kivy.uix.label import Label
+from kivy.app import App
 from database import update_node_pos
 
 
@@ -47,9 +48,41 @@ class CircleNode(FloatLayout):
         self.selected = selected
         self._color.rgba = (1, 0.84, 0, 1) if selected else (0.3, 0.6, 1, 1)
 
+    def on_parent(self, _widget, parent):
+        if parent:
+            parent.bind(size=self._keep_inside_board)
+
+    def _bounded_position(self, x, y):
+        board = self.parent
+        if board is None:
+            return x, y
+
+        left_boundary = self._sidebar_boundary(board)
+        max_y = max(0, board.height - self.height)
+        return max(x, left_boundary), min(max(y, 0), max_y)
+
+    def _sidebar_boundary(self, board):
+        app = App.get_running_app()
+        root = app.root if app else None
+        sidebar = root.ids.get("sidebar") if root else None
+
+        if sidebar is None:
+            return 0
+
+        sidebar_right_x = sidebar.to_window(sidebar.width, 0)[0]
+        board_bottom_y = board.to_window(0, 0)[1]
+        return max(0, board.to_widget(sidebar_right_x, board_bottom_y)[0])
+
+    def _keep_inside_board(self, *_):
+        self.pos = self._bounded_position(self.x, self.y)
+
     def on_touch_down(self, touch):
-        if self.collide_point(*touch.pos):
-            board = self.parent
+        board = self.parent
+        if board is None:
+            return super().on_touch_down(touch)
+
+        local_touch = board.to_widget(*touch.pos)
+        if self.collide_point(*local_touch):
             if board is not None and getattr(board, "delete_mode", False):
                 board.node_tapped_for_delete(self)
                 return True
@@ -60,14 +93,20 @@ class CircleNode(FloatLayout):
                 board.node_tapped(self)
                 return True
             touch.grab(self)
-            self._drag_offset = (touch.x - self.x, touch.y - self.y)
+            self._drag_offset = (
+                local_touch[0] - self.x,
+                local_touch[1] - self.y,
+            )
             return True
         return super().on_touch_down(touch)
 
     def on_touch_move(self, touch):
         if touch.grab_current is self:
-            self.pos = (touch.x - self._drag_offset[0],
-                        touch.y - self._drag_offset[1])
+            local_touch = self.parent.to_widget(*touch.pos)
+            self.pos = self._bounded_position(
+                local_touch[0] - self._drag_offset[0],
+                local_touch[1] - self._drag_offset[1],
+            )
             return True
         return super().on_touch_move(touch)
 
