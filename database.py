@@ -1,6 +1,17 @@
+import os
+import sys
 import sqlite3
 
-DATABASE_NAME = "caseboard.db"
+def _default_db_path():
+    """Store the database next to the executable/script, not in a bundled temp dir."""
+    if getattr(sys, "frozen", False):
+        base_dir = os.path.dirname(sys.executable)
+    else:
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+    return os.path.join(base_dir, "caseboard.db")
+
+
+DATABASE_NAME = _default_db_path()
 
 
 def init_db():

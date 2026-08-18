@@ -1,3 +1,6 @@
+import os
+import sys
+
 from kivy.lang import Builder
 from kivy.metrics import dp
 from kivy.animation import Animation
@@ -12,6 +15,12 @@ from node import CircleNode
 from database import init_db, load_nodes
 
 
+def resource_path(relative_path):
+    """Return an absolute path that works both in dev and inside a PyInstaller bundle."""
+    base_path = getattr(sys, "_MEIPASS", os.path.dirname(os.path.abspath(__file__)))
+    return os.path.join(base_path, relative_path)
+
+
 class CaseBoardApp(MDApp):
     sidebar_open = False
     dialog = None
@@ -19,7 +28,7 @@ class CaseBoardApp(MDApp):
     def build(self):
         init_db()
         self.theme_cls.theme_style = "Dark"
-        root_widget = Builder.load_file("caseboard.kv")
+        root_widget = Builder.load_file(resource_path("caseboard.kv"))
     
         board = root_widget.ids.board
         for node_id, name, x, y in load_nodes():
